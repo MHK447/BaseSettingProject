@@ -19,18 +19,18 @@ public struct StageData : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public StageData __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int Stageidx { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Stageidx { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)1; } }
   public bool MutateStageidx(int stageidx) { int o = __p.__offset(4); if (o != 0) { __p.bb.PutInt(o + __p.bb_pos, stageidx); return true; } else { return false; } }
 
   public static Offset<BanpoFri.Data.StageData> CreateStageData(FlatBufferBuilder builder,
-      int stageidx = 0) {
+      int stageidx = 1) {
     builder.StartTable(1);
     StageData.AddStageidx(builder, stageidx);
     return StageData.EndStageData(builder);
   }
 
   public static void StartStageData(FlatBufferBuilder builder) { builder.StartTable(1); }
-  public static void AddStageidx(FlatBufferBuilder builder, int stageidx) { builder.AddInt(0, stageidx, 0); }
+  public static void AddStageidx(FlatBufferBuilder builder, int stageidx) { builder.AddInt(0, stageidx, 1); }
   public static Offset<BanpoFri.Data.StageData> EndStageData(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<BanpoFri.Data.StageData>(o);
@@ -57,7 +57,7 @@ public class StageDataT
   public int Stageidx { get; set; }
 
   public StageDataT() {
-    this.Stageidx = 0;
+    this.Stageidx = 1;
   }
 }
 

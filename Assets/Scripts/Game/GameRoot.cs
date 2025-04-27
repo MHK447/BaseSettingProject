@@ -170,7 +170,7 @@ public class GameRoot : Singleton<GameRoot>
 			}
 		}
 
-		
+
 
 	}
 
@@ -204,12 +204,12 @@ public class GameRoot : Singleton<GameRoot>
 			yield break;
 		}
 
-		#if BANPOFRI_LOG
+#if BANPOFRI_LOG
 			DebugConsoleObj.SetActive(true);
-		#else
-			DebugConsoleObj.SetActive(false);
-		#endif
-		
+#else
+		DebugConsoleObj.SetActive(false);
+#endif
+
 		//TouchStartActions.Clear();
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		PluginSystem.Init();
@@ -312,6 +312,9 @@ public class GameRoot : Singleton<GameRoot>
 
 		var count = GameRoot.instance.UserData.GetRecordCount(Config.RecordCountKeys.Init);
 
+		if (GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value == 0)
+			GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value = 1;
+
 		if (GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value == 1 && count == 0)
 		{
 			GameRoot.instance.UserData.AddRecordCount(Config.RecordCountKeys.Init, 1);
@@ -322,7 +325,7 @@ public class GameRoot : Singleton<GameRoot>
 		}
 		else
 		{
-			
+
 		}
 
 	}
@@ -335,7 +338,7 @@ public class GameRoot : Singleton<GameRoot>
 	{
 		if (CheatWindow != null)
 			CheatWindow.SetActive(value);
-            
+
 		// DebugLogManager가 있으면 팝업도 함께 활성화/비활성화
 		if (IngameDebugConsole.DebugLogManager.Instance != null)
 		{

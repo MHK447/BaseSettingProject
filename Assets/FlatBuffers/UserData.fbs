@@ -34,7 +34,7 @@ table RecordCount {
 
 table StageData
 {
-  stageidx:int = 0; // @ReactiveProperty
+  stageidx:int = 1; // @ReactiveProperty
 }
 
 root_type UserData;
