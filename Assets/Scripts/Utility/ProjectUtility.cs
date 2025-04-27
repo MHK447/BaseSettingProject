@@ -9,7 +9,7 @@ using System.Linq;
 using UnityEngine.AddressableAssets;
 
 
-public class ProjectUtility 
+public class ProjectUtility
 {
 
     private static string str_seconds;
@@ -162,7 +162,7 @@ public class ProjectUtility
         List<int> gacharatiolist = new List<int>();
 
         var tdlist = Tables.Instance.GetTable<OutGameGachaGradeInfo>().DataList.ToList();
-            
+
         foreach (var td in tdlist)
         {
             totalratio += td.ratio;
@@ -204,28 +204,36 @@ public class ProjectUtility
     }
 
 
-    public static Sprite GetRewardItemIconImg(int rewardtype ,  int rewardidx , int grade = -1)
+    public static Sprite GetRewardItemIconImg(int rewardtype, int rewardidx, int grade = -1)
     {
         switch (rewardtype)
         {
             case (int)Config.RewardType.Currency:
                 {
-                    switch(rewardidx)
+                    switch (rewardidx)
                     {
                         case (int)Config.CurrencyID.Money:
                             {
-                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha,"Coin");
+                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha, "Coin");
                             }
                         case (int)Config.CurrencyID.Cash:
                             {
-                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha,"Gem");
+                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha, "Gem");
                             }
                     }
                 }
                 break;
         }
 
-        return null;    
+        return null;
+    }
+
+    public static string GetRecordValueText(Config.RecordKeys key, params object[] objs)
+    {
+        if (key == Config.RecordKeys.ABTest)
+            return $"{key.ToString()}_{objs[0]}";
+
+        return key.ToString();
     }
 
 
@@ -238,9 +246,9 @@ public class ProjectUtility
 
         int totalgacharatio = 0;
 
-        if(td != null)
+        if (td != null)
         {
-            for(int i = 0; i < td.gradepercent.Count; ++i)
+            for (int i = 0; i < td.gradepercent.Count; ++i)
             {
                 totalgacharatio += td.gradepercent[i];
             }
@@ -253,7 +261,7 @@ public class ProjectUtility
             {
                 cumulativevalue += td.gradepercent[i];
 
-                if(randgacha < cumulativevalue)
+                if (randgacha < cumulativevalue)
                 {
                     return i + 1;
                 }
@@ -267,7 +275,7 @@ public class ProjectUtility
     }
 
 
-    public static float GetPercentValue(float value , float percent)
+    public static float GetPercentValue(float value, float percent)
     {
         float returnvalue = 0f;
 
@@ -324,7 +332,7 @@ public class ProjectUtility
 
     public static System.Numerics.BigInteger CalcOfflineReward(int _difftime)
     {
-    var curstageidx = GameRoot.Instance.UserData.CurMode.StageData.StageIdx;
+        var curstageidx = GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value;
 
         System.Numerics.BigInteger stagevalue = 0;
 
@@ -332,42 +340,28 @@ public class ProjectUtility
         var stagewavetd = Tables.Instance.GetTable<StageWaveInfo>().GetData(curstageidx);
 
 
-        var facilitydatas = GameRoot.Instance.UserData.CurMode.StageData.StageFacilityDataList.ToList();
 
         int highfishidx = 0;
 
-        foreach(var faciliy in facilitydatas)
-        {
-            if(!faciliy.IsOpen) continue;
+      
 
-            var td = Tables.Instance.GetTable<FacilityInfo>().GetData(faciliy.FacilityIdx);
-
-            if(td != null)
-            {
-                if(td.fish_idx > highfishidx)
-                {
-                    highfishidx = td.fish_idx;
-                }
-            }
-        }
-
-        if(highfishidx > 0)
+        if (highfishidx > 0)
         {
             var td = Tables.Instance.GetTable<FishInfo>().GetData(highfishidx);
 
-            if(td != null)
+            if (td != null)
             {
-                stagevalue = (td.base_revenue * _difftime)  / GameRoot.Instance.InGameSystem.offline_value_time;
+                stagevalue = (td.base_revenue * _difftime) / GameRoot.Instance.InGameSystem.offline_value_time;
             }
         }
 
 
-        return stagevalue;   
+        return stagevalue;
     }
 
 
 
-    public static void PlayGoodsEffect(UnityEngine.Vector3 startPos, int rewardType, int rewardIdx, int rewardGrade, System.Numerics.BigInteger value, bool isCenterStart = true, System.Action OnEnd = null, float delay = 0f, string viewText = "",  UIBase curui = null, bool reward = true, bool underOrder = false, UnityEngine.Vector3 endPos = default(UnityEngine.Vector3)
+    public static void PlayGoodsEffect(UnityEngine.Vector3 startPos, int rewardType, int rewardIdx, int rewardGrade, System.Numerics.BigInteger value, bool isCenterStart = true, System.Action OnEnd = null, float delay = 0f, string viewText = "", UIBase curui = null, bool reward = true, bool underOrder = false, UnityEngine.Vector3 endPos = default(UnityEngine.Vector3)
         , bool iscurrencytext = true)
     {
         if (value <= 0)
@@ -375,19 +369,11 @@ public class ProjectUtility
 
         if (GameRoot.Instance.InGameSystem == null)
         {
-            if (reward)
-            {
-                GameRoot.Instance.UserData.SetReward(rewardType, rewardIdx, value, false);
-            }
             return;
         }
         if (GameRoot.Instance.InGameSystem.CurInGame == null)
         {
 
-            if (reward)
-            {
-                GameRoot.Instance.UserData.SetReward(rewardType, rewardIdx, value, false);
-            }
             return;
         }
 
@@ -446,26 +432,26 @@ public class ProjectUtility
         bool iscurrencytext = true)
     {
 
-            var prefab = "UI/Component/GoodsEffect";
-            Addressables.InstantiateAsync(prefab).Completed += (obj) =>
+        var prefab = "UI/Component/GoodsEffect";
+        Addressables.InstantiateAsync(prefab).Completed += (obj) =>
+        {
+            if (obj.Result)
             {
-                if (obj.Result)
+                var inst = obj.Result;
+                inst.transform.SetParent(GameRoot.Instance.UISystem.UIRootT, false);
+
+                var goodsEff = inst.GetComponent<GoodEffect>();
+                if (goodsEff != null)
+                    goodsEff.Set(worldStartPos, worldMiddlePos, worldEndPos, goodsType, goodsIdx, goodsGrade, goodsCnt, OnEnd, delay, viewText, isreward, ani);
+
+                if (underOrder)
                 {
-                    var inst = obj.Result;
-                    inst.transform.SetParent(GameRoot.Instance.UISystem.UIRootT, false);
-
-                    var goodsEff = inst.GetComponent<GoodEffect>();
-                    if (goodsEff != null)
-                        goodsEff.Set(worldStartPos, worldMiddlePos, worldEndPos, goodsType, goodsIdx, goodsGrade, goodsCnt, OnEnd, delay, viewText, isreward, ani);
-
-                    if (underOrder)
-                    {
-                        var canvas = inst.GetComponent<Canvas>();
-                        if (canvas != null)
-                            canvas.sortingOrder = 9999;
-                    }
+                    var canvas = inst.GetComponent<Canvas>();
+                    if (canvas != null)
+                        canvas.sortingOrder = 9999;
                 }
-            };
+            }
+        };
     }
 }
 
@@ -511,7 +497,7 @@ public static class ScrollViewFocusFunctions
 
 
 
-    private static IEnumerator LerpToScrollPositionCoroutine(this ScrollRect scrollView, Vector2 targetNormalizedPos, float speed , System.Action endaction = null)
+    private static IEnumerator LerpToScrollPositionCoroutine(this ScrollRect scrollView, Vector2 targetNormalizedPos, float speed, System.Action endaction = null)
     {
         Vector2 initialNormalizedPos = scrollView.normalizedPosition;
 
@@ -534,9 +520,9 @@ public static class ScrollViewFocusFunctions
         yield return scrollView.LerpToScrollPositionCoroutine(scrollView.CalculateFocusedScrollPosition(focusPoint), speed);
     }
 
-    public static IEnumerator FocusOnItemCoroutine(this ScrollRect scrollView, RectTransform item, float speed , System.Action endaction = null)
+    public static IEnumerator FocusOnItemCoroutine(this ScrollRect scrollView, RectTransform item, float speed, System.Action endaction = null)
     {
-        yield return scrollView.LerpToScrollPositionCoroutine(scrollView.CalculateFocusedScrollPosition(item), speed , endaction);
+        yield return scrollView.LerpToScrollPositionCoroutine(scrollView.CalculateFocusedScrollPosition(item), speed, endaction);
     }
     public static IEnumerator FocusOnItemCoroutine(this ScrollRect scrollView, RectTransform item, float speed, Vector2 addPos)
     {

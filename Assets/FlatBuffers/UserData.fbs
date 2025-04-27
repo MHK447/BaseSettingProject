@@ -6,7 +6,6 @@ table UserData {
 // @AutoCreate DataClass
   money:double; // @ReactiveProperty
   cash:int = 0;// @ReactiveProperty
-  stageidx:int = 0; // @ReactiveProperty
   buyinappids:string;
   tutorial:[string];
   lastlogintime:long = 0;
@@ -15,8 +14,7 @@ table UserData {
   gamestarttime:long = 0;
   uuid:long = 0;
   recordvalue:[RecordCount];
-  testmoney:int;
-  ordertest:[int];
+  stagedata:StageData;
 }
 
 table OptionData {
@@ -34,5 +32,9 @@ table RecordCount {
   count:int = 0;
 }
 
+table StageData
+{
+  stageidx:int = 0; // @ReactiveProperty
+}
 
 root_type UserData;

@@ -9,18 +9,27 @@ public enum InGameType
     Main,
     Event,
 }
+[System.Serializable]
+public enum GameType
+{
+    Main,
+    Event,
+    Travel,
+
+    None = 99,
+}
 
 public class InGameSystem
 {
     public SceneSystem SceneSystem { get; private set; } = new SceneSystem();
-    public InGameMode CurInGame {get; private set;} = null;
+    public InGameMode CurInGame { get; private set; } = null;
 
     private bool firstInit = false;
-	private bool IsActiveEventTuto = false;
-	private bool IsTitle = false;
+    private bool IsActiveEventTuto = false;
+    private bool IsTitle = false;
 
-	private System.Action NextStageAction = null;
-	private System.Action NextStageCloseAction = null;
+    private System.Action NextStageAction = null;
+    private System.Action NextStageCloseAction = null;
 
     public bool nextStage = false;
 
@@ -40,7 +49,7 @@ public class InGameSystem
     public float casher_move_speed = 0f;
     public float carry_sleep_time = 0f;
     public int player_start_carry_count = 0;
-    public int carry_casher_count = 0; 
+    public int carry_casher_count = 0;
     public int max_offline_time = 0;
     public int offline_value_time = 0;
 
@@ -59,14 +68,15 @@ public class InGameSystem
     }
 
     public void RegisteInGame(InGameMode mode)
-	{
-		CurInGame = mode;
-	}
+    {
+        CurInGame = mode;
+    }
     public void ChangeMode(InGameType type)
     {
-       // Tables.Instance.GetTable<FacilityUpgrade>().CalculateUpgradeTable(GameRoot.Instance.UserData.CurMode.StageData.StageIdx);
+        // Tables.Instance.GetTable<FacilityUpgrade>().CalculateUpgradeTable(GameRoot.Instance.UserData.CurMode.StageData.StageIdx);
         System.GC.Collect();
-        StartGame(type, () => {
+        StartGame(type, () =>
+        {
             firstInit = false;
         });
     }
@@ -79,7 +89,7 @@ public class InGameSystem
 
     public void NextGameStage(bool Init = false)
     {
-     
+
         // 1. 현재 인게임 명시적 언로드 및 리소스 정리
         if (GameRoot.Instance.InGameSystem.CurInGame != null)
         {
@@ -87,7 +97,7 @@ public class InGameSystem
             {
                 // 인게임 언로드
                 GameRoot.Instance.InGameSystem.CurInGame.UnLoad();
-                
+
                 // GC 실행 요청
                 Resources.UnloadUnusedAssets();
                 System.GC.Collect();
@@ -100,29 +110,30 @@ public class InGameSystem
 
         // 2. 스테이지 데이터 업데이트
         var saveTime = TimeSystem.GetCurTime().Ticks;
-        var curidx = GameRoot.Instance.UserData.CurMode.StageData.StageIdx;
-        GameRoot.Instance.UserData.CurMode.StageData.SetStageIdx(curidx + 1);
-    
+        var curidx = GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value += 1;
+
         // 3. 시스템 초기화 순서 명확히 하기
-        try 
+        try
         {
             // 사운드 먼저 로드
             SoundPlayer.Instance.Load();
-            
+
             // 각 시스템 순차적 초기화
-        
-            
+
+
             // 비동기 작업 완료 보장을 위해 짧은 딜레이 추가
-            GameRoot.Instance.WaitTimeAndCallback(0.1f, () => {
+            GameRoot.Instance.WaitTimeAndCallback(0.1f, () =>
+            {
                 GameRoot.Instance.InGameSystem.Create();
-                
-                GameRoot.Instance.WaitTimeAndCallback(0.1f, () => {
-                    
+
+                GameRoot.Instance.WaitTimeAndCallback(0.1f, () =>
+                {
+
                     // 나머지 초기화
                     GameRoot.Instance.TutorialSystem.ClearRegisiter();
                     GameRoot.Instance.UserData.CurMode.Money.Value = 0;
                     GameRoot.Instance.UserData.Save();
-                    
+
                     if (!Init)
                     {
                         // 새 스테이지를 시작하기 전에 광고 관련 리소스 해제
@@ -139,7 +150,7 @@ public class InGameSystem
                         {
                             Debug.LogWarning("AdManager 접근 중 오류 발생: " + e.Message);
                         }
-                        
+
                         StartGame(GameRoot.Instance.CurInGameType, LoadCallBack);
                     }
                 });
@@ -148,11 +159,12 @@ public class InGameSystem
         catch (System.Exception e)
         {
             Debug.LogError("Error during NextGameStage: " + e.ToString());
-            
+
             // 오류 발생 시 안전하게 초기화 시도
             if (!Init)
             {
-                GameRoot.Instance.WaitTimeAndCallback(0.5f, () => {
+                GameRoot.Instance.WaitTimeAndCallback(0.5f, () =>
+                {
                     StartGame(GameRoot.Instance.CurInGameType, LoadCallBack);
                 });
             }
@@ -162,17 +174,16 @@ public class InGameSystem
 
     public void LoadCallBack()
     {
-        var curstageidx = GameRoot.Instance.UserData.CurMode.StageData.StageIdx;
+        var curstageidx = GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value;
 
         var stagetd = Tables.Instance.GetTable<StageInfo>().GetData(curstageidx);
 
-        if(stagetd != null)
+        if (stagetd != null)
         {
-            GameRoot.Instance.UserData.CurMode.Money.Value = GameRoot.Instance.UserData.HUDMoney.Value = 0;
             GameRoot.Instance.UserData.SetReward((int)Config.RewardType.Currency, (int)Config.CurrencyID.Money, stagetd.seedmoney_value);
 
-			SoundPlayer.Instance.PlayBGM("bgm", true);
-            
+            SoundPlayer.Instance.PlayBGM("bgm", true);
+
             // 스테이지 로드 완료 후 광고 관련 작업 재개
             try
             {
@@ -180,7 +191,8 @@ public class InGameSystem
                 if (adManager != null)
                 {
                     // 1초 후 광고 관련 작업 재개
-                    GameRoot.Instance.WaitTimeAndCallback(1f, () => {
+                    GameRoot.Instance.WaitTimeAndCallback(1f, () =>
+                    {
                         adManager.gameObject.SendMessage("PauseAdOperations", false, SendMessageOptions.DontRequireReceiver);
                     });
                 }
@@ -210,7 +222,7 @@ public class InGameSystem
 
         System.Action NextAction = () =>
         {
-            
+
             if (ActionQueue.Count < 1)
             {
                 inInitPopups = false;
@@ -229,12 +241,12 @@ public class InGameSystem
         var diff = TimeSystem.GetCurTime().Subtract(time);
         var minRewardTime = Tables.Instance.GetTable<Define>().GetData("offline_min_time").value;
         var maxRewardTime = Tables.Instance.GetTable<Define>().GetData("max_offline_time").value;
-    
-        
+
+
         // if (diff.TotalSeconds > minRewardTime && time != DateTime.MinValue)
         // {
         //     int rewardTime = (int)diff.TotalSeconds;
-            
+
         //     if ((int)diff.TotalSeconds >= maxRewardTime)
         //     {
         //         rewardTime = maxRewardTime;
@@ -258,7 +270,8 @@ public class InGameSystem
 
         if (!firstInit)
         {
-            GameRoot.Instance.WaitTimeAndCallback(2f, () => {
+            GameRoot.Instance.WaitTimeAndCallback(2f, () =>
+            {
                 GameRoot.Instance.Loading.Hide(true, () =>
                 {
                     NextAction();
@@ -278,6 +291,6 @@ public class InGameSystem
     }
 
 
-    
+
 
 }

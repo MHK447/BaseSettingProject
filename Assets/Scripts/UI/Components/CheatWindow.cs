@@ -46,7 +46,6 @@ public class CheatWindow : MonoBehaviour
         }
         inputField.text = "";
         GameRoot.Instance.UserData.CurMode.EnergyMoney.Value += convert;
-        GameRoot.Instance.UserData.HudEnergyMoney.Value += convert;
     }
 
     public void SetCash()

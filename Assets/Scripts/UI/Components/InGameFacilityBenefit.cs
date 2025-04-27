@@ -39,7 +39,6 @@ public class InGameFacilityBenefit : InGameFloatingUI
     public  void OnClickBenefit()
     {
         OnClickAction?.Invoke();
-        GameRoot.Instance.UserData.SetReward((int)Config.RewardType.Currency, (int)Config.CurrencyID.Money, Benefit);
         Utility.SetActiveCheck(this.gameObject, false);
     }
 

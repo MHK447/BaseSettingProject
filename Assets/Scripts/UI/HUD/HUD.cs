@@ -46,13 +46,5 @@ public class HUD : UIBase
             CashText.text = x.ToString();
         }).AddTo(this);
 
-        GameRoot.Instance.UserData.HUDMoney.Subscribe(x =>
-        {
-            MoneyText.text = Utility.CalculateMoneyToString(x);
-        }).AddTo(this);
-        GameRoot.Instance.UserData.HudEnergyMoney.Subscribe(x =>
-        {
-            EnergyMoneyText.text = x.ToString();
-        }).AddTo(this);
     }
 }

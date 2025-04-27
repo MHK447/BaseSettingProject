@@ -926,6 +926,10 @@ public class FlatBuffersConvertor
                 if (fieldInfo.Type == "string"){
                     funcCode.AppendLine($"{indent}builder.CreateString({itemName}.{fieldName}){comma}");
                 }
+                else if(fieldInfo.IsReactive)
+                {
+                    funcCode.AppendLine($"{indent}{itemName}.{fieldName}{comma}.Value");
+                }
                 else{
                     funcCode.AppendLine($"{indent}{itemName}.{fieldName}{comma}");
                 }
@@ -1051,14 +1055,19 @@ public class FlatBuffersConvertor
             // 커스텀 타입이 아니고 리스트/딕셔너리가 아닌 기본 필드만 처리
             if (!field.Value.IsCustom && !field.Value.IsList && !field.Value.IsDictionary)
             {
+                string reactivecheck = string.Empty;
+                if(field.Value.IsReactive)
+                {
+                    reactivecheck = ".Value";
+                }
                 // 초기화 블록의 경우 속성명만 쓰고, 아닌 경우 객체.속성명으로 접근
                 if (isInitializerBlock)
                 {
-                    funcCode.AppendLine($"{indent}{fieldName} = {sourceVar}.{fieldName}{comma}{terminator}");
+                    funcCode.AppendLine($"{indent}{fieldName}{reactivecheck} = {sourceVar}.{fieldName}{comma}{terminator}");
                 }
                 else
                 {
-                    funcCode.AppendLine($"{indent}{targetVar}.{fieldName} = {sourceVar}.{fieldName}{terminator}");
+                    funcCode.AppendLine($"{indent}{targetVar}.{fieldName}{reactivecheck} = {sourceVar}.{fieldName}{terminator}");
                 }
             }
         }

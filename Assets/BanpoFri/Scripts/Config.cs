@@ -46,6 +46,20 @@ public class Config : BanpoFri.SingletonScriptableObject<Config>, BanpoFri.ILoad
         CRITICALDAMAGE,
     }
 
+     public enum RecordKeys
+    {
+        StagePlayTime,
+        EventStagePlayTime,
+        Init,
+        FirstDayPlayTime,
+        FirstDayLogTime,
+        M_Rev_05,
+        ABTest,
+        ShopDailyPurchaseCnt,
+        TryTowerClear,
+        UseADTicketCnt,
+    }
+
     public enum WeaponType
     {
         Base = 1,

@@ -20,21 +20,20 @@ public class ContentsOpenSystem : MonoBehaviour
 
         var td = Tables.Instance.GetTable<ContentsOpenCheck>().GetData((int)opentype);
 
-        var stageidx = GameRoot.Instance.UserData.CurMode.StageData.StageIdx;
+        var stageidx = GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value;
 
         if(td != null)
         {
-            var findfacility = GameRoot.Instance.UserData.CurMode.StageData.FindFacilityData(td.open_facilityidx);
-            
+           
 
             if(stageidx > td.stage_idx)
             {
                 isopencheck = true;
             }
-            else if(stageidx == td.stage_idx && findfacility.IsOpen)
-            {
-                isopencheck = true;
-            }
+            // else if(stageidx == td.stage_idx && findfacility.IsOpen)
+            // {
+            //     isopencheck = true;
+            // }
         }
 
         return isopencheck;

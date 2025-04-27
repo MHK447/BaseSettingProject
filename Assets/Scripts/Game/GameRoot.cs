@@ -34,17 +34,19 @@ public class GameRoot : Singleton<GameRoot>
 	public RectTransform GetMainCanvasTR { get { return MainCanvas.transform as RectTransform; } }
 	public UISystem UISystem { get; private set; } = new UISystem();
 	public UserDataSystem UserData { get; private set; } = new UserDataSystem();
-	public InGameSystem InGameSystem { get; private set; } = new InGameSystem();
-	public SnapshotCamera SnapshotCam { get; private set; } = null;
-	public PluginSystem PluginSystem { get; private set; } = new PluginSystem();
-	public PlayTimeSystem PlayTimeSystem { get; private set; } = new PlayTimeSystem();
-	public EffectSystem EffectSystem { get; private set; } = new EffectSystem();
 	public TutorialSystem TutorialSystem { get; private set; } = new TutorialSystem();
-		public ShopSystem ShopSystem { get; private set; } = new ShopSystem();
+	public PlayTimeSystem PlayTimeSystem { get; private set; } = new PlayTimeSystem();
+	public InGameSystem InGameSystem { get; private set; } = new InGameSystem();
+	public PluginSystem PluginSystem { get; private set; } = new PluginSystem();
+	public BoostSystem BoostSystem { get; private set; } = new BoostSystem();
+	public EffectSystem EffectSystem { get; private set; } = new EffectSystem();
 
 	public GameNotificationSystem GameNotification { get; private set; } = new GameNotificationSystem();
-	public BoostSystem BoostSystem { get; private set; } = new BoostSystem();
+
 	public ContentsOpenSystem ContentsOpenSystem { get; private set; } = new ContentsOpenSystem();
+
+	public ShopSystem ShopSystem { get; private set; } = new ShopSystem();
+
 
 
 
@@ -133,8 +135,6 @@ public class GameRoot : Singleton<GameRoot>
 
 			deltaTime -= 1f;
 
-			BoostSystem.UpdateOneSecond();
-			ShopSystem.UpdateOneTimeSecond();
 
 
 		}
@@ -254,8 +254,6 @@ public class GameRoot : Singleton<GameRoot>
 
 		InGameSystem.Create();
 		GameNotification.Create();
-		BoostSystem.Create();
-		ShopSystem.Create();
 
 
 		GameRoot.instance.WaitTimeAndCallback(0.5f, () =>
@@ -314,7 +312,7 @@ public class GameRoot : Singleton<GameRoot>
 
 		var count = GameRoot.instance.UserData.GetRecordCount(Config.RecordCountKeys.Init);
 
-		if (GameRoot.Instance.UserData.CurMode.StageData.StageIdx == 1 && count == 0)
+		if (GameRoot.Instance.UserData.CurMode.StageData.Stageidx.Value == 1 && count == 0)
 		{
 			GameRoot.instance.UserData.AddRecordCount(Config.RecordCountKeys.Init, 1);
 
