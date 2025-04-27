@@ -3,15 +3,20 @@ namespace BanpoFri.Data;
 
 
 table UserData {
-  cash:int = 0;
-  stageidx:int = 0;
+// @AutoCreate DataClass
+  money:double; // @ReactiveProperty
+  cash:int = 0;// @ReactiveProperty
+  stageidx:int = 0; // @ReactiveProperty
   buyinappids:string;
-  tutorial:string;
+  tutorial:[string];
   lastlogintime:long = 0;
   optiondata:OptionData;
   recordcount:[RecordCount];
+  gamestarttime:long = 0;
   uuid:long = 0;
   recordvalue:[RecordCount];
+  testmoney:int;
+  ordertest:[int];
 }
 
 table OptionData {
