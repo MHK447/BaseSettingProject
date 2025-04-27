@@ -214,11 +214,11 @@ public class ProjectUtility
                     {
                         case (int)Config.CurrencyID.Money:
                             {
-                                return Config.Instance.GetCommonImg("Coin");
+                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha,"Coin");
                             }
                         case (int)Config.CurrencyID.Cash:
                             {
-                                return Config.Instance.GetCommonImg("Gem");
+                                return AtlasManager.Instance.GetSprite(Atlas.Atals_UI_Gacha,"Gem");
                             }
                     }
                 }

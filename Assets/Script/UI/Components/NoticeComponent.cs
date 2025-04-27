@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using BanpoFri;
+using UnityEngine.U2D;
 public class NoticeComponent : MonoBehaviour
 {
     public enum NoticeType
@@ -34,7 +35,8 @@ public class NoticeComponent : MonoBehaviour
 
         Target = target;
 
-        NoticeImg.sprite = Config.Instance.GetCommonImg($"Icon_Noti_{type.ToString()}");
+    
+        NoticeImg.sprite = AtlasManager.Instance.GetSprite(Atlas.Atals_UI_PopupImg,$"Icon_Noti_{type.ToString()}");
 
     }
 
